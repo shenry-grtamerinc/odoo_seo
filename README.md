@@ -13,7 +13,7 @@ This single file contains everything you need to install and configure the envir
 
 ---
 
-## 0) (Optional) Install Homebrew & Python
+## Install Homebrew & Python
 
 If `python3 --version` already shows 3.8+, you can skip this section.
 
@@ -57,7 +57,7 @@ python3 -m pip install openai
 python3 -m pip install python-dotenv
 ```
 
-### Optional (only if/when you add Google Sheets later)
+### (when you add Google Sheets later)
 ```bash
 python3 -m pip install gspread
 python3 -m pip install google-auth
