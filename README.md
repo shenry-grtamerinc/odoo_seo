@@ -9,7 +9,7 @@ This single file contains everything you need to install and configure the envir
 - Optional Google Sheets deps  
 - Sanity checks & troubleshooting  
 
-⚠️ This README intentionally does not include app code—only the dependencies and exact commands to reproduce the setup.
+!!! This README intentionally does not include app code—only the dependencies and exact commands to reproduce the setup.
 
 ---
 
