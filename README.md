@@ -1,4 +1,6 @@
-This single file contains everything you need to install and configure the environment used for **Phase 2 (Batch Automation & Concurrency)**:
+## README
+
+## This single file contains everything you need to install and configure the environment used for **Phase 2 (Batch Automation & Concurrency)**:
 
 - Python + virtual environment  
 - Playwright (Python) + browser engines  
