@@ -1,12 +1,11 @@
-# Odoo SEO Bot — Dependencies & Setup (macOS)
-
-This single file contains everything you need to install and configure the environment used for the MVP:
+This single file contains everything you need to install and configure the environment used for **Phase 2 (Batch Automation & Concurrency)**:
 
 - Python + virtual environment  
 - Playwright (Python) + browser engines  
 - OpenAI Python SDK  
 - Environment variables (`.env`)  
-- Optional Google Sheets deps  
+- CSV/Google Sheets ingestion  
+- Batch mode & concurrency (`MAX_CONCURRENT`, `BATCH_LIMIT`)  
 - Sanity checks & troubleshooting  
 
 !!! This README intentionally does not include app code—only the dependencies and exact commands to reproduce the setup.
@@ -55,6 +54,8 @@ python3 -m pip install --upgrade pip
 python3 -m pip install playwright
 python3 -m pip install openai
 python3 -m pip install python-dotenv
+python3 -m pip install tqdm
+python3 -m pip install requests
 ```
 
 ### (when you add Google Sheets later)
@@ -90,9 +91,15 @@ OD_EMAIL=REPLACE_ME
 OD_PASS=REPLACE_ME
 
 # Runtime
-HEADLESS=false       # true|false (browser UI)
-SLOWMO_MS=250        # ms to slow down actions for visibility
-TEST_QUERY=Milwaukee 0240-20 3/8" Drill
+HEADLESS=false            # true|false (browser UI)
+SLOWMO_MS=200             # ms delay for visibility
+MAX_CONCURRENT=2          # simultaneous browser windows
+BATCH_LIMIT=20            # number of products per run (0 = all)
+BATCH_CSV_PATH=August_2025_Product_Data.csv
+# Optional Google Sheet export URL:
+# BATCH_CSV_URL=https://docs.google.com/spreadsheets/d/.../export?format=csv&gid=...
+
+TEST_QUERY=Milwaukee 0940-20 M18 FUEL™ Compact Vacuum
 ```
 
 ---
@@ -105,6 +112,8 @@ cat > requirements.txt <<'REQ'
 playwright>=1.46.0
 python-dotenv>=1.0.1
 openai>=1.40.0
+tqdm>=4.66.0
+requests>=2.31.0
 
 # Optional (when you add Google Sheets):
 gspread>=6.0.0
@@ -120,8 +129,10 @@ OD_URL=https://greatamerican.steersman.io/web/login
 OD_EMAIL=REPLACE_ME
 OD_PASS=REPLACE_ME
 HEADLESS=false
-SLOWMO_MS=250
-TEST_QUERY=Milwaukee 0240-20 3/8" Drill
+SLOWMO_MS=200
+MAX_CONCURRENT=2
+BATCH_LIMIT=20
+BATCH_CSV_PATH=August_2025_Product_Data.csv
 ENV
 ```
 
@@ -129,6 +140,9 @@ ENV
 ```bash
 cat > .gitignore <<'GI'
 .env
+.DS_Store
+batch_log.csv
+August_2025_Product_Data.csv
 service_account.json
 venv/
 __pycache__/
@@ -158,7 +172,7 @@ source venv/bin/activate
 if [ -f requirements.txt ]; then
   python3 -m pip install -r requirements.txt
 else
-  python3 -m pip install playwright openai python-dotenv
+  python3 -m pip install playwright openai python-dotenv tqdm requests
 fi
 
 playwright install
@@ -167,9 +181,9 @@ SH
 chmod +x setup_mac.sh
 ```
 
-### `run_poc.sh` — activate venv and run your script
+### `run_batch.sh` — activate venv and run your batch script
 ```bash
-cat > run_poc.sh <<'SH'
+cat > run_batch.sh <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -178,13 +192,47 @@ if [ -d "venv" ]; then
   source venv/bin/activate
 fi
 
-python3 odoo_poc.py
+python3 odoo_poc_batch.py
 SH
-chmod +x run_poc.sh
+chmod +x run_batch.sh
 ```
 
+---
 
+## 5) Verify Setup
 
+```bash
+source venv/bin/activate
+python3 odoo_poc_batch.py
+```
 
+Expected startup output:
+```
+Loaded 1333 total products; processing first 20 (BATCH_LIMIT)
+Concurrency = 2, Headless = False
 
+Preview of products being processed:
+ • Wix 42055 WIX Air Filter (42055)
+ • Wix 57060 WIX Spin-On Lube Filter (57060)
+Batch progress: ...
+✅ Batch completed: 20 products processed (limit = 20).
+```
 
+---
+
+## 6) Push to GitHub
+
+```bash
+git add odoo_poc_batch.py .gitignore README.md
+git commit -m "Add batch automation + BATCH_LIMIT + concurrency fixes"
+git push
+```
+
+---
+
+✅ **Done!**  
+Your Phase 2 environment is fully reproducible:  
+- Automated batch content generation  
+- Multi-browser concurrency  
+- Configurable product limits  
+- Safe `.env` isolation and dependency pinning
