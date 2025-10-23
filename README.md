@@ -220,19 +220,4 @@ Batch progress: ...
 
 ---
 
-## 6) Push to GitHub
 
-```bash
-git add odoo_poc_batch.py .gitignore README.md
-git commit -m "Add batch automation + BATCH_LIMIT + concurrency fixes"
-git push
-```
-
----
-
-✅ **Done!**  
-Your Phase 2 environment is fully reproducible:  
-- Automated batch content generation  
-- Multi-browser concurrency  
-- Configurable product limits  
-- Safe `.env` isolation and dependency pinning
