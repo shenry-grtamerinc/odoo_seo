@@ -7,3 +7,8 @@ __pycache__/
 *.log
 test-results/
 playwright-report/
+.env
+.DS_Store
+batch_log.csv
+August_2025_Product_Data.csv
+venv/
